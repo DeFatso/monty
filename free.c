@@ -41,6 +41,10 @@ void execute_opcode(stack_t **my_stack, char *opcode,
 	{
 		add(my_stack, line_number);
 	}
+	else if (strcmp(opcode, "nop") == 0)
+	{
+		nop(my_stack, line_number);
+	}
 	else if (strcmp(opcode, "pint") == 0)
 	{
 		pint(my_stack, line_number);
