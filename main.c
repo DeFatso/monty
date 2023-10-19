@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
 			}
 			push(&my_stack, value);
 		}
-		else if (strcmp(line, "pall") == 0)
+		else if (strcmp(line, "pint") == 0)
 		{
-			pall(&my_stack, line_number);
+			pint(&my_stack, line_number);
 		}
 		else if (strcmp(line, "pop") == 0)
 		{
@@ -57,7 +57,6 @@ cleanup:
 	while (my_stack)
 	{
 		stack_t *temp = my_stack;
-
 		my_stack = my_stack->next;
 		free(temp);
 	}
