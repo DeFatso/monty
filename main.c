@@ -1,65 +1,56 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
 #include "monty.h"
-/**
- * main - entry point
- * @argc: argc
- * @argv: argv
- * Return: 0 at success
- */
+
 int main(int argc, char *argv[])
 {
-	stack_t *my_stack = NULL;
+	FILE *file = fopen(argv[1], "r");
+	stack_t *stack = NULL;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t read;
 	unsigned int line_number = 0;
-	char line[100];
-	int value;
-	FILE *file;
+	char *opcode, *argument;
 
 	if (argc != 2)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
-		return (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
-	file = fopen(argv[1], "r");
 	if (file == NULL)
 	{
 		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
-		return (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-
-	while (fgets(line, sizeof(line), file) != NULL)
+	while ((read = getline(&line, &len, file)) != -1)
 	{
 		line_number++;
-		line[strlen(line) - 1] = '\0';
+		opcode = strtok(line, " \t\n");
+		if (opcode == NULL || opcode[0] == '#')
+			continue;
 
-		if (strncmp(line, "push", 4) == 0)
+		if (strcmp(opcode, "push") == 0)
 		{
-			value = atoi(line + 5);
-			if (value == 0 && line[5] != '0')
+			argument = strtok(NULL, " \t\n");
+			if (argument == NULL)
 			{
 				fprintf(stderr, "L%d: usage: push integer\n", line_number);
-				goto cleanup;
+				free(line);
+				fclose(file);
+				free_stack(stack);
+				exit(EXIT_FAILURE);
 			}
-			push(&my_stack, value);
+			push(&stack, atoi(argument));
 		}
-		else if (strcmp(line, "pint") == 0)
+		else
 		{
-			pint(&my_stack, line_number);
-		}
-		else if (strcmp(line, "pop") == 0)
-		{
-			pop(&my_stack, line_number);
+			execute_opcode(&stack, opcode, line_number, line);
 		}
 	}
 
-cleanup:
+	free(line);
 	fclose(file);
-
-	while (my_stack)
-	{
-		stack_t *temp = my_stack;
-		my_stack = my_stack->next;
-		free(temp);
-	}
-
-	return (EXIT_SUCCESS);
+	free_stack(stack);
+	return (0);
 }

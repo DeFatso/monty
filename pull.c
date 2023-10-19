@@ -32,6 +32,7 @@ void push(stack_t **stack, int value)
 void pop(stack_t **stack, unsigned int line_number)
 {
 	stack_t *temp = *stack;
+
 	if (!stack || !*stack)
 	{
 		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
