@@ -7,24 +7,25 @@
  */
 int main(int argc, char *argv[])
 {
-	stack_t *my_stack;
-	unsigned int line_number;
+	stack_t *my_stack = NULL;
+	unsigned int line_number = 0;
 	char line[100];
 	int value;
-	FILE *file = fopen(argv[1], "r");
+	FILE *file;
 
 	if (argc != 2)
 	{
-		fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+		fprintf(stderr, "USAGE: monty file\n");
 		return (EXIT_FAILURE);
 	}
+
+	file = fopen(argv[1], "r");
 	if (file == NULL)
 	{
-		fprintf(stderr, "Error: Cannot open file %s\n", argv[1]);
+		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
 		return (EXIT_FAILURE);
 	}
-	my_stack = NULL;
-	line_number = 0;
+
 	while (fgets(line, sizeof(line), file) != NULL)
 	{
 		line_number++;
@@ -36,7 +37,7 @@ int main(int argc, char *argv[])
 			if (value == 0 && line[5] != '0')
 			{
 				fprintf(stderr, "L%d: usage: push integer\n", line_number);
-				return (EXIT_FAILURE);
+				goto cleanup;
 			}
 			push(&my_stack, value);
 		}
@@ -48,13 +49,18 @@ int main(int argc, char *argv[])
 		{
 			pop(&my_stack, line_number);
 		}
-
-		else if (strcmp(line, "pint") == 0)
-		{
-			pint(&my_stack, line_number);
-		}
 	}
 
+cleanup:
 	fclose(file);
-	return (0);
+
+	while (my_stack)
+	{
+		stack_t *temp = my_stack;
+
+		my_stack = my_stack->next;
+		free(temp);
+	}
+
+	return (EXIT_SUCCESS);
 }
