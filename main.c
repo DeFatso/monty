@@ -39,9 +39,14 @@ int main(int argc, char *argv[])
 				return (EXIT_FAILURE);
 			}
 			push(&my_stack, value);
-		} else if (strcmp(line, "pall") == 0)
+		}
+		else if (strcmp(line, "pall") == 0)
 		{
 			pall(&my_stack, line_number);
+		}
+		else if (strcmp(line, "pint") == 0)
+		{
+			pint(&my_stack, line_number);
 		}
 	}
 
