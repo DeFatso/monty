@@ -24,6 +24,24 @@ void push(stack_t **stack, int value)
 	}
 	*stack = new_node;
 }
+/**
+ * pop - function to remove the top element of the stack
+ * @stack: pointer to stack
+ * @line_number: line number
+ */
+void pop(stack_t **stack, unsigned int line_number)
+{
+	stack_t *temp = *stack;
+	if (!stack || !*stack)
+	{
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	*stack = temp->next;
+	if (*stack)
+		(*stack)->prev = NULL;
+	free(temp);
+}
 
 /**
  * pall - function to print all elements in the stack
@@ -60,11 +78,11 @@ void initialize(stack_t *stack)
  */
 void pint(stack_t **stack, unsigned int line_number)
 {
-    if (!stack || !*stack)
-    {
-        fprintf(stderr, "L%d: can't pint, stack empty\n", line_number);
-        exit(EXIT_FAILURE);
-    }
+	if (!stack || !*stack)
+	{
+		fprintf(stderr, "L%d: can't pint, stack empty\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 
-    printf("%d\n", (*stack)->n);
+	printf("%d\n", (*stack)->n);
 }
